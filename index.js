@@ -17,18 +17,29 @@ if (process.env.SCOPES) {
 // on successful install, users will be redirected to /oauth-callback
 const REDIRECT_URI = `http://localhost:${PORT}/oauth-callback`;
 
-// Build the auth URL
+//================================//
+//   Running the OAuth 2.0 Flow   //
+//================================//
+
+// Step 1
+// Build the authorization URL to redirect a user
+// to when they choose to install the app
 const authUrl =
 'https://app.hubspot.com/oauth/authorize' +
 `?client_id=${encodeURIComponent(CLIENT_ID)}` +
 `&scope=${encodeURIComponent(SCOPES)}` +
 `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
 
-
+// Redirect the user from the installation page to
+// the authorization URL
 app.get('/install', (req, res) => {
-    // Redirect the user
-    return res.redirect(authUrl);
-})
+    console.log('');
+    console.log('=== Initiating OAuth 2.0 flow with HubSpot ===');
+    console.log('');
+    console.log("===> Step 1: Redirecting user to your app's OAuth URL");
+    res.redirect(authUrl);
+    console.log('===> Step 2: User is being prompted for consent by HubSpot');
+  });
 
 app.listen(PORT)
 console.log(`Listening on port ${PORT}`);
