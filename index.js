@@ -43,3 +43,28 @@ app.get('/install', (req, res) => {
 
 app.listen(PORT)
 console.log(`Listening on port ${PORT}`);
+
+// Step 2
+// The user is prompted to give the app access to the requested
+// resources. This is all done by HubSpot, so no work is necessary
+// on the app's end
+
+// Step 3
+// Receive the authorization code from the OAuth 2.0 Server,
+// and process it based on the query parameters that are passed
+app.get('/oauth-callback', async (req, res) => {
+    console.log('===> Step 3: Handling the request sent by the server');
+  
+    // Received a user authorization code
+    if (req.query.code) {
+      console.log('       > Received an authorization token');
+  
+      const authCodeProof = {
+        grant_type: 'authorization_code',
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        redirect_uri: REDIRECT_URI,
+        code: req.query.code
+      };
+    }
+  });
