@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
+const request = require('request-promise-native')
 const app = express();
 
 const PORT = 3000;
@@ -74,42 +75,22 @@ app.get('/oauth-callback', async (req, res) => {
         redirect_uri: REDIRECT_URI,
         code: req.query.code
       };
+    
+    // Step 4
+    // Exchange the authorization code for an access token and refresh token
+    console.log('===> Step 4: Exchanging authorization code for an access token and refresh token');
+    request.post('https://api.hubapi.com/oauth/v1/token', { form: authCodeProof }, (err, data) => {
+        if (err) {
+            console.log('       > Error:', err);
+            res.send(err);
+        } else {
+            contents = JSON.parse(data.body);
+            console.log('       > Received an access token');
+            console.log('       > Access token:', contents['access_token']);
+            res.send('Acces-token: ' + contents['access_token'] + 
+            '<br><br>Refresh-token: ' + contents['refresh_token'] +
+            '<br><br>Expires in: ' + contents['expires_in']);
+        }
+      });
     }
-  });
-      
-    // // Step 4
-    // // Exchange the authorization code for an access token and refresh token
-    // console.log('===> Step 4: Exchanging authorization code for an access token and refresh token');
-    // const token = await exchangeForTokens(req.sessionID, authCodeProof);
-    // if (token.message) {
-    //   return res.redirect(`/error?msg=${token.message}`);
-    // }
-
-    // // Once the tokens have been retrieved, use them to make a query
-    // // to the HubSpot API
-    // res.redirect(`/`);
-  //   }
-  // });
-
-// //==========================================//
-// //   Exchanging Proof for an Access Token   //
-// //==========================================//
-
-// const exchangeForTokens = async (userId, exchangeProof) => {
-//   try {
-//     const responseBody = await request.post('https://api.hubapi.com/oauth/v1/token', {
-//       form: exchangeProof
-//     });
-//     // Usually, this token data should be persisted in a database and associated with
-//     // a user identity.
-//     const tokens = JSON.parse(responseBody);
-//     refreshTokenStore[userId] = tokens.refresh_token;
-//     accessTokenCache.set(userId, tokens.access_token, Math.round(tokens.expires_in * 0.75));
-
-//     console.log('       > Received an access token and refresh token');
-//     return tokens.access_token;
-//   } catch (e) {
-//     console.error(`       > Error exchanging ${exchangeProof.grant_type} for access token`);
-//     return JSON.parse(e.response.body);
-//   }
-// };
+});
