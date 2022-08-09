@@ -87,7 +87,7 @@ app.get('/oauth-callback', async (req, res) => {
             contents = JSON.parse(data.body);
             console.log('       > Received an access token');
             console.log('       > Access token:', contents['access_token']);
-            res.send('Acces-token: ' + contents['access_token'] + 
+            res.send('Access-token: ' + contents['access_token'] + 
             '<br><br>Refresh-token: ' + contents['refresh_token'] +
             '<br><br>Expires in: ' + contents['expires_in']);
             
